@@ -1,0 +1,17 @@
+# Laravel
+/vendor
+/node_modules
+.env
+.env.local
+/storage/*.key
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular
+/frontend/node_modules
+/frontend/dist
