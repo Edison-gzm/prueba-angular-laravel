@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
@@ -25,7 +26,15 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => [
+            'required',
+             Password::min(8)
+            ->letters()      // Al menos una letra 
+            ->mixedCase()    // Mayúsculas y minúsculas 
+            ->numbers()      // Al menos un número 
+            ->symbols(),     // Al menos un carácter especial 
+            ] ,
+
             'role' => 'required|in:admin,user',
         ]);
 

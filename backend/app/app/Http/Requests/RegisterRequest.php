@@ -41,7 +41,7 @@ class RegisterRequest extends FormRequest
         'password.mixed'   => 'La contraseña debe tener al menos una mayúscula y una minúscula.',
         'password.symbols' => '¡Cuidado! Te falta un carácter especial (como @, #, $, !).',
         'password.numbers' => 'Debes incluir al menos un número.',
-        'password'  => 'La contraseña no cumple con los requisitos de seguridad (mayúsculas, números o símbolos).',
+        //'password'  => 'La contraseña no cumple con los requisitos de seguridad (mayúsculas, números o símbolos).',
     ];
 }
 }
