@@ -6,11 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 
 
-/*
-|--------------------------------------------------------------------------
-|--- RUTAS PÚBLICAS DE AUTENTICACIÓN ---
-|--------------------------------------------------------------------------
-*/
+//---------------------------------------------------------------------
 
 Route::prefix('auth')->group(function () {
 
@@ -25,43 +21,38 @@ Route::prefix('auth')->group(function () {
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| PRODUCT ROUTES
-|--------------------------------------------------------------------------
-*/
-
+//----------------------------------------------------------
   Route::apiResource('products', ProductController::class);
+    
 
-  /*
-|--------------------------------------------------------------------------
-| --- RUTAS PROTEGIDAS (REQUIEREN TOKEN) ---
-|--------------------------------------------------------------------------
-*/
-  Route::middleware('auth:sanctum')->group(function () {
 
-   // Perfil y Logout (Cualquier usuario logueado)
+//---------------------------------------------------
+ 
+ Route::middleware('auth:sanctum')->group(function () {
+
+    // Perfil y Logout (Cualquier usuario logueado)
     Route::get('/auth/profile', [AuthController::class, 'profile']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
-    // Catálogo y Compra (Puntos 1.B y 3.C de la prueba)
-    Route::get('products', [ProductController::class, 'index']);
-    Route::post('products/buy', [ProductController::class, 'buy']);
-
-    /* --- BLOQUE EXCLUSIVO PARA ADMINS --- */
-
-    // Aquí usamos el middleware que verifica el campo 'role' en la BD
+    // BLOQUE EXCLUSIVO PARA ADMINS 
     Route::middleware('admin')->group(function () {
         
-        // CRUD completo de Productos (Solo Admin)
-        Route::post('products', [ProductController::class, 'store']);
-        Route::put('products/{id}', [ProductController::class, 'update']);
-        Route::delete('products/{id}', [ProductController::class, 'destroy']);
-        
-        // User Management 
-        Route::apiResource('users', UserController::class);
-        
-        // Dashboard Stats (Opcional para el panel principal)
-        Route::get('admin/dashboard', [AuthController::class, 'dashboardStats']);
+       // 1. Ruta para listar usuarios (la que estamos probando)
+    Route::get('users', [UserController::class, 'index']); 
+    
+    // 2. Otras rutas manuales
+    Route::post('users', [UserController::class, 'store']);
+    Route::put('users/{id}', [UserController::class, 'update']);
+    Route::patch('users/{id}/role', [UserController::class, 'updateRole']);
+    Route::delete('users/{id}', [UserController::class, 'destroy']);
+
+    // 3. CRUD de Productos
+    Route::post('products', [ProductController::class, 'store']);
+    Route::put('products/{id}', [ProductController::class, 'update']);
+    Route::delete('products/{id}', [ProductController::class, 'destroy']);
+    
+    // 4. Dashboard
+    Route::get('admin/dashboard', [AuthController::class, 'dashboardStats']);
+    
     });
 });

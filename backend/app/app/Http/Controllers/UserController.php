@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Listar todos los usuarios (R del CRUD).
-     */
+
     public function index(): JsonResponse
     {
-        $users = User::all();
-        return response()->json($users);
+       $users = User::all();
+       return response()->json($users, 200);
+
     }
 
     /**
@@ -58,9 +57,27 @@ class UserController extends Controller
         return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
     }
 
-    /**
-     * Eliminar un usuario (D del CRUD).
-     */
+    public function updateRole(Request $request, $id): JsonResponse
+    {
+    
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'role' => 'required|string|in:admin,user'
+    ]);
+
+    $user->role = $request->role;
+    $user->save();
+
+    return response()->json([
+        'mensaje' => 'Rol actualizado correctamente',
+        'usuario' => $user
+    ], 200);
+    }   
+
+
+    
+
     public function destroy($id): JsonResponse
     {
         $user = User::findOrFail($id);
