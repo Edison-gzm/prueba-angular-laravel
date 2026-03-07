@@ -6,16 +6,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    /**
-     * Listar todos los usuarios (R del CRUD).
-     */
+
     public function index(): JsonResponse
     {
-        $users = User::all();
-        return response()->json($users);
+       $users = User::all();
+       return response()->json($users, 200);
+
     }
 
     /**
@@ -26,7 +26,15 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => [
+            'required',
+             Password::min(8)
+            ->letters()      // Al menos una letra 
+            ->mixedCase()    // Mayúsculas y minúsculas 
+            ->numbers()      // Al menos un número 
+            ->symbols(),     // Al menos un carácter especial 
+            ] ,
+
             'role' => 'required|in:admin,user',
         ]);
 
@@ -58,9 +66,27 @@ class UserController extends Controller
         return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
     }
 
-    /**
-     * Eliminar un usuario (D del CRUD).
-     */
+    public function updateRole(Request $request, $id): JsonResponse
+    {
+    
+    $user = User::findOrFail($id);
+
+    $request->validate([
+        'role' => 'required|string|in:admin,user'
+    ]);
+
+    $user->role = $request->role;
+    $user->save();
+
+    return response()->json([
+        'mensaje' => 'Rol actualizado correctamente',
+        'usuario' => $user
+    ], 200);
+    }   
+
+
+    
+
     public function destroy($id): JsonResponse
     {
         $user = User::findOrFail($id);

@@ -75,9 +75,13 @@ class AuthController extends Controller
   //_______________________________________________
 
       public function profile(){
-        return response()->json([
-            'message' => 'Profile token verificado'
-        ]);
+    
+    $user = auth()->user();
+
+    return response()->json([
+        'message' => 'profile correcto',
+        'user' => $user
+    ], 200);
     }
 
 
