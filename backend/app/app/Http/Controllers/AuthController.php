@@ -2,51 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User; 
+use App\Services\UserService;      
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Request;
-use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
+
 
 class AuthController extends Controller
 {
+    /**
+     * @var UserService
+     */
+    protected $userService;
 
-    public function register(Request $request)
+    /**
+     * Constructor para inyectar el servicio de usuario.
+     * * @param UserService $userService
+     */
+    public function __construct(UserService $userService)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user'
-        ]);
-
-        return response()->json($user);
+        $this->userService = $userService;
     }
 
+    /**
+     * Registro de nuevo usuario con validación segura.
+     *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        // El Request ya validó la contraseña (mínimo 8, mayúscula, símbolo) 
+        $user = $this->userService->registerUser($request->validated());
 
-    public function login(Request $request)
+        return response()->json([
+            'message' => 'Usuario creado con éxito',
+            'user' => $user
+        ], 201);
+    }
+
+    /**
+     * Inicio de sesión.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
     {
         $user = User::where('email', $request->email)->first();
 
-        if(!$user || !Hash::check($request->password, $user->password)){
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'Credenciales incorrectas'
-            ],401);
+            ], 401);
         }
 
-        return response()->json($user);
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ]);
+    }
+
+  //_______________________________________________
+
+      public function profile(){
+    
+    $user = auth()->user();
+
+    return response()->json([
+        'message' => 'profile correcto',
+        'user' => $user
+    ], 200);
     }
 
 
-    public function profile()
-    {
-        return response()->json(auth()->user());
-    }
-
-
-    public function logout()
-    {
+    public function logout(){
         return response()->json([
             'message' => 'Logout correcto'
         ]);
     }
-
+    
 }
+
+
+  
+
+
