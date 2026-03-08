@@ -46,7 +46,7 @@ Route::prefix('auth')->group(function () {
     
 
     Route::get('admin/dashboard', [AuthController::class, 'dashboardStats']);
-    Route::get('products/{id}', [ProductController::class, 'show']);
+    
     
     });
 });
