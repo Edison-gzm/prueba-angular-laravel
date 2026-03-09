@@ -1,0 +1,144 @@
+<div class="space-y-6">
+<h2 class="text-2xl font-bold text-slate-800">Administrar Productos</h2>
+
+<div class="flex flex-wrap items-center gap-3">
+
+<input
+type="text"
+[(ngModel)]="searchTerm"
+placeholder="Buscar producto"
+class="border rounded px-3 py-1.5 text-sm"
+>
+
+<button (click)="searchProduct()" class="px-4 py-1.5 bg-blue-600 text-white rounded text-sm">
+Buscar
+</button>
+
+<button (click)="showCreateForm()" class="px-4 py-1.5 bg-emerald-600 text-white rounded text-sm">
+Crear Producto
+</button>
+
+</div>
+
+<div *ngIf="loading" class="flex items-center gap-3 text-slate-600">
+  <div class="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+  <span>Cargando productos...</span>
+</div>
+
+
+
+<!-- CREAR PRODUCTO -->
+
+<div *ngIf="creatingProduct" class="mt-4 space-y-3 border rounded p-4 bg-white">
+
+<h3 class="font-semibold text-slate-800">Crear Producto</h3>
+
+<input type="text" [(ngModel)]="newProduct.name" placeholder="Nombre" class="border rounded px-3 py-1.5 w-full text-sm">
+
+<input type="text" [(ngModel)]="newProduct.Category" placeholder="Category" class="border rounded px-3 py-1.5 w-full text-sm">
+
+<div class="mt-2 space-y-2">
+
+  <div class="flex items-center gap-2 text-sm">
+    <span>Precio</span>
+  </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.price"
+      placeholder="0"
+      class="border rounded px-3 py-1.5 w-full text-sm">
+
+    <div class="flex items-center gap-2 text-sm">
+        <span>Cantidad</span>
+    </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.stock"
+      placeholder="0"
+      class="border rounded px-3 py-1.5 w-full text-sm">
+</div>
+
+<button (click)="createProduct()" class="px-4 py-1.5 bg-blue-600 text-white rounded text-sm">
+Guardar
+</button>
+
+</div>
+
+
+<!-- EDITAR PRODUCTO -->
+
+<div *ngIf="editingProduct" class="mt-4 space-y-3 border rounded p-4 bg-white">
+
+<h3 class="font-semibold text-slate-800">Editar Producto</h3>
+
+<input type="text" [(ngModel)]="editData.name" class="border rounded px-3 py-1.5 w-full text-sm">
+
+<input type="text" [(ngModel)]="editData.Category" class="border rounded px-3 py-1.5 w-full text-sm">
+
+<div class="mt-2 space-y-2">
+
+  <div class="flex items-center gap-2 text-sm">
+    <span>Precio</span>
+  </div>
+    <input
+      type="number"
+      [(ngModel)]="editData.price"
+      placeholder="0"
+      class="border rounded px-3 py-1.5 w-full text-sm">
+
+    <div class="flex items-center gap-2 text-sm">
+        <span>Cantidad</span>
+    </div>
+    <input
+      type="number"
+      [(ngModel)]="editData.stock"
+      placeholder="0"
+      class="border rounded px-3 py-1.5 w-full text-sm">
+</div>
+
+<button (click)="updateProduct()" class="px-4 py-1.5 bg-emerald-600 text-white rounded text-sm">
+Guardar cambios
+</button>
+
+</div>
+
+
+<!-- TABLA PRODUCTOS -->
+
+<div class="mt-6 overflow-x-auto bg-white rounded shadow">
+<table class="min-w-full text-sm">
+
+<tr>
+<th class="px-4 py-2 text-left">ID</th>
+<th class="px-4 py-2 text-left">Nombre</th>
+<th class="px-4 py-2 text-left">Categoria</th>
+<th class="px-4 py-2 text-left">Precio</th>
+<th class="px-4 py-2 text-left">Stock</th>
+<th class="px-4 py-2 text-left">Acciones</th>
+</tr>
+
+<tr *ngFor="let product of products" class="border-t">
+
+<td class="px-4 py-2">{{product.id}}</td>
+<td class="px-4 py-2">{{product.name}}</td>
+<td class="px-4 py-2">{{product.Category}}</td>
+<td class="px-4 py-2">{{product.price}}</td>
+<td class="px-4 py-2">{{product.stock}}</td>
+
+<td class="px-4 py-2 space-x-2">
+
+<button (click)="editProduct(product)" class="px-3 py-1 bg-amber-500 text-white rounded text-xs">
+Editar
+</button>
+
+<button (click)="deleteProduct(product.id)" class="px-3 py-1 bg-red-500 text-white rounded text-xs">
+Eliminar
+</button>
+
+</td>
+
+</tr>
+
+</table>
+</div>
+</div>

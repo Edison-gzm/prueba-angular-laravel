@@ -12,31 +12,31 @@ import { ProductService } from '../../core/services/products';
 })
 export class CartComponent {
 
-  cartService = inject(CartService);
-  productService = inject(ProductService);
+  readonly cartService = inject(CartService);
+  private productService = inject(ProductService);
 
   cartItems = this.cartService.items;
+  checkoutLoading = false;
 
-checkout() {
+  checkout()  {
+    const itemsToBuy = this.cartService.items().map(item => ({
+      product_id: item.id,
+      quantity: item.quantity
+    }));
 
-  const items = this.cartService.items();
+    this.checkoutLoading = true;
 
-  const payload = items.map(item => ({
-    product_id: item.id,
-    quantity: item.quantity
-  }));
-
-  this.productService.buyProducts(payload)
-    .subscribe({
-      next: () => {
-
+    this.productService.buyProducts(itemsToBuy).subscribe({
+      next: (res) => {
+        alert('Compra realizada con éxito');
         this.cartService.clearCart();
-
-        alert("Compra realizada ✅");
-
+        this.checkoutLoading = false;
+        window.location.reload();
       },
-      error: err => console.error(err)
+      error: (err) => {
+        console.error('Error al comprar', err);
+        this.checkoutLoading = false;
+      }
     });
-
-}
+  }
 }

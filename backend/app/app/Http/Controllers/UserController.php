@@ -5,21 +5,47 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
 
+    /**
+     * Lista usuarios creados en los últimos 12 meses (solo recientes).
+     *
+     * @return JsonResponse Lista de usuarios ordenados por fecha descendente
+     */
     public function index(): JsonResponse
     {
-       $users = User::all();
-       return response()->json($users, 200);
+        $users = User::where('created_at', '>=', now()->subYear())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
+        return response()->json($users, 200);
     }
 
     /**
-     * Crear un usuario manualmente desde el Admin (C del CRUD).
+     * Obtiene un usuario por su ID.
+     *
+     * @param int|string $id ID del usuario
+     * @return JsonResponse Usuario encontrado o 404
+     */
+    public function show($id): JsonResponse
+    {
+        // Buscamos el usuario o lanzamos un error 404 si no existe
+        $user = User::findOrFail($id);
+
+        return response()->json([
+            'message' => 'Usuario encontrado con éxito',
+            'user' => $user
+        ], 200);
+    }
+
+    /**
+     * Crea un usuario desde el panel de administración (nombre, email, contraseña, rol).
+     *
+     * @param Request $request name, email, password (con reglas fuertes), role (admin|user)
+     * @return JsonResponse Usuario creado con código 201
      */
     public function store(Request $request): JsonResponse
     {
@@ -41,7 +67,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'], // el modelo User tiene cast 'hashed'
             'role' => $validated['role'],
         ]);
 
@@ -49,7 +75,11 @@ class UserController extends Controller
     }
 
     /**
-     * Actualizar datos y ROL de un usuario (U del CRUD).
+     * Actualiza nombre, email y/o rol de un usuario.
+     *
+     * @param Request $request name, email, role (todos opcionales)
+     * @param int|string $id ID del usuario
+     * @return JsonResponse Usuario actualizado
      */
     public function update(Request $request, $id): JsonResponse
     {
@@ -66,27 +96,39 @@ class UserController extends Controller
         return response()->json(['message' => 'Usuario actualizado con éxito', 'user' => $user]);
     }
 
+    /**
+     * Cambia solo el rol de un usuario (admin o user).
+     *
+     * @param Request $request role (required, admin|user)
+     * @param int|string $id ID del usuario
+     * @return JsonResponse Usuario con rol actualizado
+     */
     public function updateRole(Request $request, $id): JsonResponse
     {
-    
-    $user = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
-    $request->validate([
-        'role' => 'required|string|in:admin,user'
-    ]);
+        $request->validate([
+            'role' => 'required|string|in:admin,user'
+        ]);
 
-    $user->role = $request->role;
-    $user->save();
+        $user->role = $request->role;
+        $user->save();
 
-    return response()->json([
-        'mensaje' => 'Rol actualizado correctamente',
-        'usuario' => $user
-    ], 200);
+        return response()->json([
+            'mensaje' => 'Rol actualizado correctamente',
+            'usuario' => $user
+        ], 200);
     }   
 
 
     
 
+    /**
+     * Elimina un usuario. No permite que un admin se elimine a sí mismo.
+     *
+     * @param int|string $id ID del usuario
+     * @return JsonResponse Mensaje de confirmación o 403 si intenta borrarse
+     */
     public function destroy($id): JsonResponse
     {
         $user = User::findOrFail($id);

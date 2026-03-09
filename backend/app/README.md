@@ -7,6 +7,36 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Base de datos y datos de prueba
+
+Para que la aplicación tenga tablas y datos dummy al clonar o iniciar en otro equipo:
+
+1. **Con Docker** (desde la raíz del proyecto donde está `docker-compose.yml`):
+   ```bash
+   docker-compose up -d
+   docker-compose exec backend php artisan migrate --seed
+   ```
+
+   O bien, desde la raíz del proyecto: `.\setup-db.ps1` (PowerShell).
+
+2. **Sin Docker** (con PHP y PostgreSQL locales):
+   ```bash
+   cd backend/app
+   php artisan migrate --seed
+   ```
+
+**Usuarios de prueba** (contraseña para todos: `Password1!`):
+
+| Email              | Rol   |
+|--------------------|-------|
+| admin@prueba.com   | admin |
+| usuario@prueba.com | user  |
+| maria@prueba.com   | user  |
+
+Además se cargan **10 productos** de ejemplo (electrónica, mobiliario, papelería) para probar el listado y la API.
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

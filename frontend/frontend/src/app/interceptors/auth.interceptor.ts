@@ -1,20 +1,27 @@
 import { HttpInterceptorFn } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-
   const token = localStorage.getItem('token');
 
-  if (token) {
+  let authReq = req;
 
-    const clonedRequest = req.clone({
+  if (token) {
+    authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
       }
     });
-
-    return next(clonedRequest);
   }
 
-  return next(req);
-
+  return next(authReq).pipe(
+    catchError(error => {
+      if (error.status === 401) {  // token expiró o no válido
+        localStorage.removeItem('token');
+        window.location.href = '/auth';  // redirige al login
+      }
+      return throwError(() => error);
+    })
+  );
 };

@@ -1,17 +1,32 @@
-<nav style="background: #1e293b; color: white; padding: 1rem; display: flex; justify-content: space-between;">
-  <div>
-    <strong style="color: #60a5fa;">MiTienda</strong>
-    <a routerLink="/" style="color: white; margin-left: 15px;">Inicio</a>
-    <a routerLink="/catalogo" style="color: white; margin-left: 15px;">Catálogo</a>
+<nav class="bg-slate-900 text-white px-6 py-3 flex justify-between items-center shadow-lg border-b border-slate-700">
+  <div class="flex items-center gap-5">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-500 to-cyan-400 flex items-center justify-center text-slate-900 font-extrabold shadow-md">
+        M
+      </div>
+      <div class="flex flex-col leading-tight">
+        <span class="font-semibold text-lg tracking-wide">MarketShop</span>
+        <span class="text-xs text-slate-300">Tu tienda online</span>
+      </div>
+    </div>
+    <a routerLink="/" class="text-slate-100 hover:text-blue-300 transition text-sm md:text-base">Inicio</a>
+    <a routerLink="/user" class="text-slate-100 hover:text-blue-300 transition text-sm md:text-base">Catálogo</a>
   </div>
-  
-  <div>
-    <a routerLink="/cart" style="color: white; text-decoration: none;">
-    🛒 Carrito: <strong>{{ cartCount() }}</strong>
+  <div class="flex items-center gap-4">
+    <a routerLink="/cart" class="text-slate-100 hover:text-blue-300 flex items-center gap-1 transition text-sm md:text-base">
+      🛒 Carrito: <strong>{{ cartCount() }}</strong>
     </a>
+    @if (isLoggedIn()) {
+      <button
+        (click)="logout()"
+        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm md:text-base transition shadow"
+      >
+        Cerrar sesión
+      </button>
+    }
   </div>
 </nav>
 
-<div style="padding: 20px;">
+<div class="p-8 min-h-screen bg-gradient-to-b from-slate-100 via-slate-100 to-slate-200">
   <router-outlet></router-outlet>
 </div>

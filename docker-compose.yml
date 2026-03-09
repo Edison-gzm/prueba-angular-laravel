@@ -29,7 +29,7 @@ services:
   node:
     image: node:20
     container_name: angular_app
-    working_dir: /app
+    working_dir: /app/frontend
     volumes:
       - ./frontend:/app
     ports:
