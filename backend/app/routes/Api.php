@@ -35,6 +35,7 @@ Route::prefix('auth')->group(function () {
     
    //CRUD de Admin
     Route::post('users', [UserController::class, 'store']);
+    Route::get('users/{id}', [UserController::class, 'show']);
     Route::put('users/{id}', [UserController::class, 'update']);
     Route::patch('users/{id}/role', [UserController::class, 'updateRole']);
     Route::delete('users/{id}', [UserController::class, 'destroy']);

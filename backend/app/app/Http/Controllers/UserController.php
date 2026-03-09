@@ -18,6 +18,17 @@ class UserController extends Controller
 
     }
 
+    public function show($id): JsonResponse
+    {
+        // Buscamos el usuario o lanzamos un error 404 si no existe
+        $user = User::findOrFail($id);
+
+        return response()->json([
+            'message' => 'Usuario encontrado con éxito',
+            'user' => $user
+        ], 200);
+    }
+
     /**
      * Crear un usuario manualmente desde el Admin (C del CRUD).
      */
@@ -51,6 +62,8 @@ class UserController extends Controller
     /**
      * Actualizar datos y ROL de un usuario (U del CRUD).
      */
+
+   
     public function update(Request $request, $id): JsonResponse
     {
         $user = User::findOrFail($id);

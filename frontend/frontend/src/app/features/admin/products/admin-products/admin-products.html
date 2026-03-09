@@ -1,0 +1,121 @@
+<h2>Administrar Productos</h2>
+
+<div>
+
+<input
+type="text"
+[(ngModel)]="searchTerm"
+placeholder="Buscar producto">
+
+<button (click)="searchProduct()">Buscar</button>
+
+<button (click)="showCreateForm()">Crear Producto</button>
+
+</div>
+
+
+
+<!-- CREAR PRODUCTO -->
+
+<div *ngIf="creatingProduct">
+
+<h3>Crear Producto</h3>
+
+<input type="text" [(ngModel)]="newProduct.name" placeholder="Nombre">
+
+<input type="text" [(ngModel)]="newProduct.Category" placeholder="Category">
+
+<div style="margin-top:10px">
+
+  <div style="display:flex; gap:40px; font-size:14px;">
+    <span>Precio</span>
+  </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.price"
+      placeholder="0">
+
+    <div style="display:flex; gap:40px; font-size:14px;">
+        <span>Cantidad</span>
+    </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.stock"
+      placeholder="0">
+</div>
+
+<button (click)="createProduct()">Guardar</button>
+
+</div>
+
+
+<!-- EDITAR PRODUCTO -->
+
+<div *ngIf="editingProduct">
+
+<h3>Editar Producto</h3>
+
+<input type="text" [(ngModel)]="editData.name">
+
+<input type="text" [(ngModel)]="editData.Category">
+
+<div style="margin-top:10px">
+
+  <div style="display:flex; gap:40px; font-size:14px;">
+    <span>Precio</span>
+  </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.price"
+      placeholder="0">
+
+    <div style="display:flex; gap:40px; font-size:14px;">
+        <span>Cantidad</span>
+    </div>
+    <input
+      type="number"
+      [(ngModel)]="newProduct.stock"
+      placeholder="0">
+</div>
+
+<button (click)="updateProduct()">Guardar cambios</button>
+
+</div>
+
+
+<!-- TABLA PRODUCTOS -->
+
+<table border="1" cellpadding="10">
+
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Categoria</th>
+<th>Precio</th>
+<th>Stock</th>
+<th>Acciones</th>
+</tr>
+
+<tr *ngFor="let product of products">
+
+<td>{{product.id}}</td>
+<td>{{product.name}}</td>
+<td>{{product.Category}}</td>
+<td>{{product.price}}</td>
+<td>{{product.stock}}</td>
+
+<td>
+
+<button (click)="editProduct(product)">
+Editar
+</button>
+
+<button (click)="deleteProduct(product.id)">
+Eliminar
+</button>
+
+</td>
+
+</tr>
+
+</table>

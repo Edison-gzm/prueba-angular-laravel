@@ -17,26 +17,22 @@ export class CartComponent {
 
   cartItems = this.cartService.items;
 
-checkout() {
-
-  const items = this.cartService.items();
-
-  const payload = items.map(item => ({
+checkout()  {
+  const itemsToBuy = this.cartService.items().map(item => ({
     product_id: item.id,
     quantity: item.quantity
   }));
 
-  this.productService.buyProducts(payload)
-    .subscribe({
-      next: () => {
+  this.productService.buyProducts(itemsToBuy).subscribe({
+    next: (res) => {
+      alert('Compra realizada con éxito');
+      this.cartService.clearCart();
+     window.location.reload();
 
-        this.cartService.clearCart();
-
-        alert("Compra realizada ✅");
-
-      },
-      error: err => console.error(err)
-    });
-
+    },
+    error: (err) => {
+      console.error('Error al comprar', err);
+    }
+  });
 }
 }

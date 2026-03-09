@@ -16,4 +16,14 @@ export class App {
   
   // Exponemos el contador reactivo al HTML
   public cartCount = this.cartService.count;
+
+    logout() {
+     localStorage.removeItem('token');
+      window.location.href = '/';
+    } 
+
+      isLoggedIn() {
+      return !!localStorage.getItem('token');
+    }
+
 }

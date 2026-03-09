@@ -8,8 +8,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(), // Esto permite que Angular haga peticiones a tu backend
-     provideHttpClient(withInterceptors([authInterceptor]),
+     provideHttpClient(withInterceptors([authInterceptor])
     )
   ]
 };

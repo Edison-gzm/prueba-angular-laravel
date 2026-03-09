@@ -1,0 +1,118 @@
+<h2>Administrar Usuarios</h2>
+
+<div>
+
+<input
+type="text"
+[(ngModel)]="searchTerm"
+placeholder="Buscar usuario por nombre o email">
+
+<button (click)="searchUser()">Buscar</button>
+
+<button (click)="showCreateForm()">Crear Usuario</button>
+
+</div>
+
+
+<!-- FORMULARIO CREAR USUARIO -->
+
+<div *ngIf="creatingUser">
+
+<h3>Crear Usuario</h3>
+
+<input type="text" [(ngModel)]="newUser.name" placeholder="Nombre">
+
+<input type="email" [(ngModel)]="newUser.email" placeholder="Email">
+
+<input type="password" [(ngModel)]="newUser.password" placeholder="Password">
+
+<select [(ngModel)]="newUser.role">
+<option value="user">User</option>
+<option value="admin">Admin</option>
+</select>
+
+<button (click)="createUser()">Guardar</button>
+
+</div>
+
+
+<!-- FORMULARIO EDITAR USUARIO -->
+
+<div *ngIf="editingUser">
+
+<h3>Editar Usuario</h3>
+
+<input type="text" [(ngModel)]="editData.name">
+
+<input type="email" [(ngModel)]="editData.email">
+
+<input type="password" [(ngModel)]="editData.password">
+
+<select [(ngModel)]="editData.role">
+<option value="user">User</option>
+<option value="admin">Admin</option>
+</select>
+
+<button (click)="updateUser()">Guardar cambios</button>
+
+</div>
+
+
+
+<!-- TABLA USUARIOS -->
+
+<table border="1" cellpadding="10">
+
+<tr>
+<th>ID</th>
+<th>Nombre</th>
+<th>Email</th>
+<th>Rol</th>
+<th>Acciones</th>
+</tr>
+
+<tr *ngFor="let user of users">
+
+<td>{{user.id}}</td>
+<td>{{user.name}}</td>
+<td>{{user.email}}</td>
+
+<td>
+
+<span *ngIf="!user.editing">
+{{user.role}}
+</span>
+
+<select *ngIf="user.editing" [(ngModel)]="user.role">
+<option value="user">user</option>
+<option value="admin">admin</option>
+</select>
+
+</td>
+
+<td>
+
+            <button *ngIf="!user.editing" (click)="editUser(user)">
+            Editar
+            </button>
+            <button *ngIf="user.editing" (click)="confirmEdit(user)">
+            Confirmar
+            </button>
+
+            <button *ngIf="!user.editing" (click)="startEdit(user)">
+            EditarRol
+            </button>
+
+            <button *ngIf="user.editing" (click)="confirmEditRol(user)">
+            ConfirmarRol
+            </button>
+
+<button (click)="deleteUser(user.id)">
+Eliminar
+</button>
+
+</td>
+
+</tr>
+
+</table>

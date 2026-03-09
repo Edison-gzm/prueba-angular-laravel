@@ -1,15 +1,30 @@
 <nav style="background: #1e293b; color: white; padding: 1rem; display: flex; justify-content: space-between;">
-  <div>
-    <strong style="color: #60a5fa;">MiTienda</strong>
-    <a routerLink="/" style="color: white; margin-left: 15px;">Inicio</a>
-    <a routerLink="/catalogo" style="color: white; margin-left: 15px;">Catálogo</a>
-  </div>
   
   <div>
-    <a routerLink="/cart" style="color: white; text-decoration: none;">
-    🛒 Carrito: <strong>{{ cartCount() }}</strong>
-    </a>
+    <strong style="color: #60a5fa;">MiTienda</strong>
+
+    <a routerLink="/" style="color: white; margin-left: 15px;">Inicio</a>
+
+    <a routerLink="/user" style="color: white; margin-left: 15px;">Catálogo</a>
   </div>
+
+  <div style="display: flex; align-items: center; gap: 15px;">
+
+    <a routerLink="/cart" style="color: white; text-decoration: none;">
+      🛒 Carrito: <strong>{{ cartCount() }}</strong>
+    </a>
+
+    <!-- BOTÓN CERRAR SESIÓN -->
+    <button 
+      *ngIf="isLoggedIn()" 
+      (click)="logout()"
+      style="background:#ef4444; color:white; border:none; padding:6px 10px; border-radius:5px; cursor:pointer;"
+    >
+      Cerrar sesión
+    </button>
+
+  </div>
+
 </nav>
 
 <div style="padding: 20px;">
