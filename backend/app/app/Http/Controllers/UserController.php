@@ -5,17 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
 
+    /**
+     * Listar usuarios (solo recientes: últimos 12 meses).
+     * No se devuelven usuarios antiguos.
+     */
     public function index(): JsonResponse
     {
-       $users = User::all();
-       return response()->json($users, 200);
+        $users = User::where('created_at', '>=', now()->subYear())
+            ->orderBy('created_at', 'desc')
+            ->get();
 
+        return response()->json($users, 200);
     }
 
     public function show($id): JsonResponse
@@ -52,7 +57,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'], // el modelo User tiene cast 'hashed'
             'role' => $validated['role'],
         ]);
 

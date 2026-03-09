@@ -2,6 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../models/product.model';
 
+/** Respuesta paginada del API (scroll infinito). */
+export interface ProductsPaginatedResponse {
+  data: Product[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProductService {
 
@@ -9,9 +18,16 @@ export class ProductService {
 
   private apiUrl = 'http://localhost:8000/api/products';
 
-  // OBTENER PRODUCTOS
+  /** Lista todos (sin paginación). Usado por admin. */
   getProducts() {
     return this.http.get<Product[]>(this.apiUrl);
+  }
+
+  /** Lista una página (para catálogo con scroll infinito). */
+  getProductsPaginated(page: number, perPage: number) {
+    return this.http.get<ProductsPaginatedResponse>(this.apiUrl, {
+      params: { page, per_page: perPage }
+    });
   }
 
   // OBTENER UN PRODUCTO

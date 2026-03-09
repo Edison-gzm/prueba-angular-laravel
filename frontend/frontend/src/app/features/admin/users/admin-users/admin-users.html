@@ -1,118 +1,122 @@
-<h2>Administrar Usuarios</h2>
+<div class="space-y-6">
+  <h2 class="text-2xl font-bold text-slate-800">Administrar Usuarios</h2>
 
-<div>
+  <div class="flex flex-wrap items-center gap-3">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Buscar usuario por nombre o email"
+      class="border border-slate-300 rounded-lg px-3 py-2 text-sm w-64 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+    <button (click)="searchUser()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+      Buscar
+    </button>
+    <button (click)="showCreateForm()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
+      Crear Usuario
+    </button>
+  </div>
 
-<input
-type="text"
-[(ngModel)]="searchTerm"
-placeholder="Buscar usuario por nombre o email">
+  <div *ngIf="loading" class="flex items-center gap-3 text-slate-600 py-4">
+    <div class="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <span>Cargando usuarios...</span>
+  </div>
 
-<button (click)="searchUser()">Buscar</button>
+  <!-- CREAR USUARIO -->
+  <div *ngIf="creatingUser" class="mt-4 p-5 bg-white rounded-xl shadow-md border border-slate-200 space-y-4">
+    <h3 class="font-semibold text-slate-800 text-lg">Crear Usuario</h3>
+    <div class="grid gap-3 max-w-md">
+      <input type="text" [(ngModel)]="newUser.name" placeholder="Nombre"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <input type="email" [(ngModel)]="newUser.email" placeholder="Email"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <input type="password" [(ngModel)]="newUser.password" placeholder="Contraseña"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <select [(ngModel)]="newUser.role"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+        <option value="user">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <button (click)="createUser()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+      Guardar
+    </button>
+  </div>
 
-<button (click)="showCreateForm()">Crear Usuario</button>
+  <!-- EDITAR USUARIO -->
+  <div *ngIf="editingUser" class="mt-4 p-5 bg-white rounded-xl shadow-md border border-slate-200 space-y-4">
+    <h3 class="font-semibold text-slate-800 text-lg">Editar Usuario</h3>
+    <div class="grid gap-3 max-w-md">
+      <input type="text" [(ngModel)]="editData.name" placeholder="Nombre"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <input type="email" [(ngModel)]="editData.email" placeholder="Email"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <input type="password" [(ngModel)]="editData.password" placeholder="Nueva contraseña (opcional)"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <select [(ngModel)]="editData.role"
+        class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+        <option value="user">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <button (click)="updateUser()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
+      Guardar cambios
+    </button>
+  </div>
 
+  <!-- TABLA USUARIOS -->
+  <div class="mt-6 overflow-x-auto bg-white rounded-xl shadow-md border border-slate-200">
+    <table class="min-w-full text-sm">
+      <thead class="bg-slate-50 border-b border-slate-200">
+        <tr>
+          <th class="px-4 py-3 text-left font-semibold text-slate-700">ID</th>
+          <th class="px-4 py-3 text-left font-semibold text-slate-700">Nombre</th>
+          <th class="px-4 py-3 text-left font-semibold text-slate-700">Email</th>
+          <th class="px-4 py-3 text-left font-semibold text-slate-700">Rol</th>
+          <th class="px-4 py-3 text-left font-semibold text-slate-700">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="border-t border-slate-100 hover:bg-slate-50 transition">
+          <td class="px-4 py-3 text-slate-600">{{ user.id }}</td>
+          <td class="px-4 py-3 font-medium text-slate-800">{{ user.name }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ user.email }}</td>
+          <td class="px-4 py-3">
+            <span *ngIf="!user.editing" class="inline-flex px-2 py-0.5 rounded text-xs font-medium"
+              [ngClass]="user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-700'">
+              {{ user.role }}
+            </span>
+            <select *ngIf="user.editing" [(ngModel)]="user.role"
+              class="border border-slate-300 rounded px-2 py-1 text-xs">
+              <option value="user">user</option>
+              <option value="admin">admin</option>
+            </select>
+          </td>
+          <td class="px-4 py-3">
+            <div class="flex flex-wrap gap-2">
+              <button *ngIf="!user.editing" (click)="editUser(user)"
+                class="px-3 py-1.5 bg-amber-500 text-white rounded-lg text-xs font-medium hover:bg-amber-600 transition">
+                Editar
+              </button>
+              <button *ngIf="user.editing" (click)="confirmEdit(user)"
+                class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-medium hover:bg-emerald-700 transition">
+                Confirmar
+              </button>
+              <button *ngIf="!user.editing" (click)="startEdit(user)"
+                class="px-3 py-1.5 bg-blue-500 text-white rounded-lg text-xs font-medium hover:bg-blue-600 transition">
+                Editar rol
+              </button>
+              <button *ngIf="user.editing" (click)="confirmEditRol(user)"
+                class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700 transition">
+                Confirmar rol
+              </button>
+              <button (click)="deleteUser(user.id)"
+                class="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-600 transition">
+                Eliminar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-
-<!-- FORMULARIO CREAR USUARIO -->
-
-<div *ngIf="creatingUser">
-
-<h3>Crear Usuario</h3>
-
-<input type="text" [(ngModel)]="newUser.name" placeholder="Nombre">
-
-<input type="email" [(ngModel)]="newUser.email" placeholder="Email">
-
-<input type="password" [(ngModel)]="newUser.password" placeholder="Password">
-
-<select [(ngModel)]="newUser.role">
-<option value="user">User</option>
-<option value="admin">Admin</option>
-</select>
-
-<button (click)="createUser()">Guardar</button>
-
-</div>
-
-
-<!-- FORMULARIO EDITAR USUARIO -->
-
-<div *ngIf="editingUser">
-
-<h3>Editar Usuario</h3>
-
-<input type="text" [(ngModel)]="editData.name">
-
-<input type="email" [(ngModel)]="editData.email">
-
-<input type="password" [(ngModel)]="editData.password">
-
-<select [(ngModel)]="editData.role">
-<option value="user">User</option>
-<option value="admin">Admin</option>
-</select>
-
-<button (click)="updateUser()">Guardar cambios</button>
-
-</div>
-
-
-
-<!-- TABLA USUARIOS -->
-
-<table border="1" cellpadding="10">
-
-<tr>
-<th>ID</th>
-<th>Nombre</th>
-<th>Email</th>
-<th>Rol</th>
-<th>Acciones</th>
-</tr>
-
-<tr *ngFor="let user of users">
-
-<td>{{user.id}}</td>
-<td>{{user.name}}</td>
-<td>{{user.email}}</td>
-
-<td>
-
-<span *ngIf="!user.editing">
-{{user.role}}
-</span>
-
-<select *ngIf="user.editing" [(ngModel)]="user.role">
-<option value="user">user</option>
-<option value="admin">admin</option>
-</select>
-
-</td>
-
-<td>
-
-            <button *ngIf="!user.editing" (click)="editUser(user)">
-            Editar
-            </button>
-            <button *ngIf="user.editing" (click)="confirmEdit(user)">
-            Confirmar
-            </button>
-
-            <button *ngIf="!user.editing" (click)="startEdit(user)">
-            EditarRol
-            </button>
-
-            <button *ngIf="user.editing" (click)="confirmEditRol(user)">
-            ConfirmarRol
-            </button>
-
-<button (click)="deleteUser(user.id)">
-Eliminar
-</button>
-
-</td>
-
-</tr>
-
-</table>

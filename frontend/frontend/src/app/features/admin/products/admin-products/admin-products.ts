@@ -14,6 +14,8 @@ export class AdminProductsComponent {
   products:any[] = [];
   allProducts:any[] = [];
 
+  loading = false;
+
   searchTerm:string = "";
 
   creatingProduct = false;
@@ -43,12 +45,18 @@ export class AdminProductsComponent {
   // CARGAR PRODUCTOS
   loadProducts(){
 
+    this.loading = true;
+
     this.productService.getProducts()
-    .subscribe((data:any)=>{
-
-      this.products = data;
-      this.allProducts = data;
-
+    .subscribe({
+      next: (data:any) => {
+        this.products = data;
+        this.allProducts = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
 
   }

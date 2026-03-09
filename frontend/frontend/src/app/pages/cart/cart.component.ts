@@ -12,27 +12,31 @@ import { ProductService } from '../../core/services/products';
 })
 export class CartComponent {
 
-  cartService = inject(CartService);
-  productService = inject(ProductService);
+  readonly cartService = inject(CartService);
+  private productService = inject(ProductService);
 
   cartItems = this.cartService.items;
+  checkoutLoading = false;
 
-checkout()  {
-  const itemsToBuy = this.cartService.items().map(item => ({
-    product_id: item.id,
-    quantity: item.quantity
-  }));
+  checkout()  {
+    const itemsToBuy = this.cartService.items().map(item => ({
+      product_id: item.id,
+      quantity: item.quantity
+    }));
 
-  this.productService.buyProducts(itemsToBuy).subscribe({
-    next: (res) => {
-      alert('Compra realizada con éxito');
-      this.cartService.clearCart();
-     window.location.reload();
+    this.checkoutLoading = true;
 
-    },
-    error: (err) => {
-      console.error('Error al comprar', err);
-    }
-  });
-}
+    this.productService.buyProducts(itemsToBuy).subscribe({
+      next: (res) => {
+        alert('Compra realizada con éxito');
+        this.cartService.clearCart();
+        this.checkoutLoading = false;
+        window.location.reload();
+      },
+      error: (err) => {
+        console.error('Error al comprar', err);
+        this.checkoutLoading = false;
+      }
+    });
+  }
 }

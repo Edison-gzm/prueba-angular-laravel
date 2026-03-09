@@ -16,6 +16,8 @@ export class AdminUsersComponent {
   users:any[] = [];
   allUsers:any[] = [];
 
+  loading = false;
+
   // BUSCADOR
   searchTerm:string = "";
 
@@ -49,12 +51,18 @@ export class AdminUsersComponent {
   // CARGAR USUARIOS
   loadUsers(){
 
+    this.loading = true;
+
     this.userService.getUsers()
-    .subscribe((data:any)=>{
-
-      this.users = data;
-      this.allUsers = data;
-
+    .subscribe({
+      next: (data:any) => {
+        this.users = data;
+        this.allUsers = data;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
 
   }
