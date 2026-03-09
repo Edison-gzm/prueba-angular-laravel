@@ -92,8 +92,11 @@ class AuthController extends Controller
             ->withCookie($cookie);
     }
 
-  //_______________________________________________
-
+    /**
+     * Devuelve el perfil del usuario autenticado.
+     *
+     * @return JsonResponse Usuario actual
+     */
     public function profile(): JsonResponse
     {
         $user = auth()->user();
@@ -105,6 +108,11 @@ class AuthController extends Controller
     }
 
 
+    /**
+     * Cierra sesión: revoca el token y elimina la cookie de autenticación.
+     *
+     * @return JsonResponse Mensaje de logout
+     */
     public function logout(): JsonResponse
     {
         // Revocamos el token actual si existe

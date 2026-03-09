@@ -36,8 +36,13 @@ class ProductController extends Controller
         ], 200);
     }
 
-    
-   public function store(Request $request): JsonResponse
+    /**
+     * Crea un nuevo producto.
+     *
+     * @param Request $request name, Category, price, stock (todos requeridos)
+     * @return JsonResponse Producto creado con código 201
+     */
+    public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -50,13 +55,25 @@ class ProductController extends Controller
         return response()->json($product, 201);
     }
    
-   public function show($id): JsonResponse
+    /**
+     * Obtiene un producto por su ID.
+     *
+     * @param int|string $id ID del producto
+     * @return JsonResponse Producto o 404 si no existe
+     */
+    public function show($id): JsonResponse
     {
         $product = Product::findOrFail($id);
         return response()->json($product, 200);
     }
 
-   
+    /**
+     * Actualiza un producto existente.
+     *
+     * @param Request $request name, Category, price, stock (todos opcionales)
+     * @param int|string $id ID del producto
+     * @return JsonResponse Producto actualizado
+     */
     public function update(Request $request, $id): JsonResponse
     {
         $product = Product::findOrFail($id);
@@ -72,6 +89,12 @@ class ProductController extends Controller
         return response()->json($product, 200);
     }
 
+    /**
+     * Elimina un producto.
+     *
+     * @param int|string $id ID del producto
+     * @return JsonResponse Mensaje de confirmación
+     */
     public function destroy($id): JsonResponse
     {
         $product = Product::findOrFail($id);
@@ -80,7 +103,13 @@ class ProductController extends Controller
     }
 
 
-   public function buy(Request $request): JsonResponse
+    /**
+     * Procesa una compra de uno o más productos (resta stock en transacción).
+     *
+     * @param Request $request items[] con product_id y quantity
+     * @return JsonResponse items_comprados, gran_total y mensaje
+     */
+    public function buy(Request $request): JsonResponse
     {
         $request->validate([
         'items' => 'required|array|min:1',
